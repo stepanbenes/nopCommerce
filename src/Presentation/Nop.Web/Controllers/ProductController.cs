@@ -287,6 +287,16 @@ namespace Nop.Web.Controllers
             return Json(result);
         }
 
+        public virtual async Task<IActionResult> GetExistedCombinations(int productId)
+        {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product == null)
+                return NotFound();
+
+            var model = await _productModelFactory.PrepareProductCombinationModelsAsync(product);
+            return Ok(model);
+        }
+
         #endregion
 
         #region Recently viewed products
