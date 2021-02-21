@@ -287,7 +287,9 @@ namespace Nop.Web.Controllers
             return Json(result);
         }
 
-        public virtual async Task<IActionResult> GetExistedCombinations(int productId)
+        //ignore SEO friendly URLs checks
+        [CheckLanguageSeoCode(true)]
+        public virtual async Task<IActionResult> GetProductCombinations(int productId)
         {
             var product = await _productService.GetProductByIdAsync(productId);
             if (product == null)

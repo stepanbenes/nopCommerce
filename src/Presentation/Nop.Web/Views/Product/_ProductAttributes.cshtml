@@ -368,7 +368,7 @@
             $(document).ready(function () {
                 combinationsBehavior_@(Model.Id) = createCombinationsBehavior({
                     contentEl: '[data-productid="@Model.Id"]',
-                    fetchUrl: '@Html.Raw(Url.Action("GetExistedCombinations", "Product", new { productId = Model.Id }))'
+                    fetchUrl: '@Html.Raw(Url.RouteUrl("GetProductCombinations", new { productId = Model.Id }))'
                 });
                 combinationsBehavior_@(Model.Id).init();
             });
