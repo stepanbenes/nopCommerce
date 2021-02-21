@@ -17,7 +17,7 @@
       if ($attributes && $attributes.length > 0) {
         var self = this;
 
-        $.each($attributes, function (index, attribute) {
+        $.each($attributes, function (i, attribute) {
           var id = parseInt($(attribute).data('attr'));
           self.params.availableAttributeIds.push(id);
         });
@@ -42,8 +42,24 @@
 
           var selectedAttributes = self.getSelectedAttributes();
           if (selectedAttributes && selectedAttributes.length > 0) {
-            self.processCombinations();
+            // unselect selected values if they are preselected but not available
+            var availableAttributes = $.grep(selectedAttributes, function (attribute) {
+              return attribute.values.length > 0;
+            });
+            $.each(availableAttributes, function (i, attribute) {
+              var combinations = self.getCombinationsByAttributeId(attribute.id, [attribute]);
+              if (combinations && combinations.length > 0) {
+                if (!self.isAvailableCombination(combinations, [attribute])) {
+                  self.unselectValues(attribute.values);
+                }
+              } else {
+                self.unselectValues(attribute.values);
+              }
+            });
+
           }
+
+          self.processCombinations();
         },
         error: function () {
           self.params.availableCombinations = [];
@@ -53,14 +69,14 @@
 
     processCombinations: function () {
       var availableAttributeIds = this.params.availableAttributeIds;
-      if (!availableAttributeIds || availableAttributeIds.length === 0)
+      if (availableAttributeIds.length === 0)
         return;
 
       var self = this;
 
-      // disable all attribute values if combinations are empty
+      // disable all attribute values if combinations isn't available
       var availableCombinations = this.params.availableCombinations;
-      if (!availableCombinations || availableCombinations.length === 0) {
+      if (availableCombinations.length === 0) {
         var valueIds = this.getAttributeValueIds();
         $.each(valueIds, function (i, valueId) {
           self.toggleAttributeValue(valueId, false);
@@ -74,7 +90,7 @@
       $.each(availableAttributeIds, function (i, attributeId) {
         var attibuteValueIds = self.getAttributeValueIds(attributeId);
         $.each(attibuteValueIds, function (i, valueId) {
-          // if current attribute is already selected, then replace it
+          // if current attribute is already selected, then replace it with current value
           var availableAttributes = $.grep(selectedAttributes, function (attribute) {
             return attribute.id !== attributeId && attribute.values.length > 0;
           });
@@ -84,21 +100,7 @@
           // otherwise just disable the value
           var combinations = self.getCombinationsByAttributeId(attributeId, availableAttributes);
           if (combinations && combinations.length > 0) {
-            // check if any combination have stock with specified values
-            // otherwise just disable the value 
-            var existedCombinations = $.grep(combinations, function (combination) {
-              var valueIdsByCombinations = $.map(combination.Attributes, function (attribute) {
-                return attribute.ValueIds;
-              });
-              var existedAttributes = $.grep(availableAttributes, function (attribute) {
-                return $.grep(attribute.values, function (selectedValueId) {
-                  return $.inArray(selectedValueId, valueIdsByCombinations) !== -1;
-                })
-              });
-
-              return combination.InStock && existedAttributes && existedAttributes.length === availableAttributes.length;
-            });
-            self.toggleAttributeValue(valueId, existedCombinations && existedCombinations.length > 0);
+            self.toggleAttributeValue(valueId, self.isAvailableCombination(combinations, availableAttributes));
           } else {
             self.toggleAttributeValue(valueId, false);
           }
@@ -110,7 +112,7 @@
 
     getCombinationsByAttributeId: function (attributeId, processedAttributes) {
       var availableCombinations = this.params.availableCombinations;
-      if (!availableCombinations || availableCombinations.length === 0) {
+      if (availableCombinations.length === 0) {
         return;
       };
 
@@ -140,6 +142,25 @@
       });
     },
 
+    isAvailableCombination: function (combinations, attributes) {
+      // check if any combination have stock with specified values
+      // otherwise just disable the value 
+      var existedCombinations = $.grep(combinations, function (combination) {
+        var valueIdsByCombinations = $.map(combination.Attributes, function (attribute) {
+          return attribute.ValueIds;
+        });
+        var existedAttributes = $.grep(attributes, function (attribute) {
+          return $.grep(attribute.values, function (valueId) {
+            return $.inArray(valueId, valueIdsByCombinations) !== -1;
+          })
+        });
+
+        return combination.InStock && existedAttributes.length === attributes.length;
+      });
+
+      return existedCombinations.length > 0;
+    },
+
     getAttributeValueIds: function (attributeId) {
       var $contentEl = $(this.settings.contentEl);
       var $scope = attributeId ? $('[data-attr=' + attributeId + ']', $contentEl) : $contentEl;
@@ -152,9 +173,6 @@
     },
 
     toggleAttributeValue: function (valueId, enabled) {
-      if (!valueId)
-        return;
-
       var $contentEl = $(this.settings.contentEl);
       var $value = $('[data-attr-value=' + valueId + ']', $contentEl);
       if (enabled) {
@@ -168,9 +186,20 @@
       }
     },
 
+    unselectValues: function (valueIds) {
+      var $contentEl = $(this.settings.contentEl);
+      $.each(valueIds, function (i, valueId) {
+        var $value = $('[data-attr-value=' + valueId + ']', $contentEl);
+        $value.prop('selected', false);
+        $('input', $value).prop('checked', false);
+        // for image square
+        $value.removeClass('selected-value');
+      });
+    },
+
     getSelectedAttributes: function () {
       var availableAttributeIds = this.params.availableAttributeIds;
-      if (availableAttributeIds && availableAttributeIds.length > 0) {
+      if (availableAttributeIds.length > 0) {
         var $contentEl = $(this.settings.contentEl);
 
         return $.map(availableAttributeIds, function (attributeId) {
@@ -179,7 +208,7 @@
           var $attribute = $('[data-attr=' + attributeId + ']', $contentEl);
           var $attributeValues = $('[data-attr-value]', $attribute);
           if ($attributeValues && $attributeValues.length > 0) {
-            $.each($attributeValues, function (index, value) {
+            $.each($attributeValues, function (i, value) {
               var $value = $(value);
               if ($value.is(':selected') || $('input', $value).is(':checked')) {
                 var id = parseInt($value.data('attr-value'));
