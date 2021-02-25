@@ -295,17 +295,17 @@
 
                 function toggleHasAttachedDownload() {
                     if ($('#@Html.IdFor(model => model.HasAttachedDownload)').is(':checked')) {
-                        $('#pnlAttachedDownload').showField();
+                        $('#pnlAttachedDownload').showElement();
                     } else {
-                        $('#pnlAttachedDownload').hide();
+                        $('#pnlAttachedDownload').hideElement();
                     }
                 }
 
                 function sendImmediately() {
                     if ($('#@Html.IdFor(model => model.SendImmediately)').is(':checked'))
-                        $('#pnl-send-after').hide();
+                        $('#pnl-send-after').hideElement();
                     else
-                        $('#pnl-send-after').showField();
+                        $('#pnl-send-after').showElement();
                 }
             </script>
         </div>

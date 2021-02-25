@@ -104,7 +104,7 @@
                                                     $('#@Html.IdFor(model => model.SearchProductId)')
                                                         .val(ui.item.productid);
                                                     $('#search-product-friendly-name').text(ui.item.label);
-                                                    $('#search-product-clear').showField();
+                                                    $('#search-product-clear').showElement();
                                                     return false;
                                                 }
                                             });
@@ -120,7 +120,7 @@
                                         $('#search-product-clear').click(function() {
                                             $('#@Html.IdFor(model => model.SearchProductId)').val('0');
                                             $('#search-product-friendly-name').text('');
-                                            $('#search-product-clear').hide();
+                                            $('#search-product-clear').hideElement();
                                             return false;
                                         });
                                         </script>

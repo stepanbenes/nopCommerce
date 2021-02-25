@@ -1,5 +1,9 @@
-$.fn.showField = function () {
-  this.css('display', 'flex');
+$.fn.showElement = function () {
+  this.removeClass('d-none');
+}
+
+$.fn.hideElement = function () {
+  this.addClass('d-none');
 }
 
 function setLocation(url) {
