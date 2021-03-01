@@ -161,7 +161,7 @@
         var inputValue = $('#@Html.IdFor(model => model.RequiredProductIds)').val();
         if (inputValue) {
             //load friendly names
-            $('#required-products-check-progress').showElement();
+            $('#required-products-check-progress').show();
 
             var postData = {
                 productIds: inputValue
@@ -181,7 +181,7 @@
                     $('#required-product-names').text('');
                 },
                 complete: function (jqXHR, textStatus) {
-                    $('#required-products-check-progress').hideElement();
+                    $('#required-products-check-progress').hide();
                 }
             });
         } else {
