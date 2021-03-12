@@ -102,5 +102,7 @@ namespace Nop.Core.Domain.Orders
         /// Gets or sets the rental product end date (null if it's not a rental product)
         /// </summary>
         public DateTime? RentalEndDateUtc { get; set; }
+
+        public int? ProductConfigurationId { get; set; }
     }
 }

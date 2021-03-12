@@ -70,5 +70,7 @@ namespace Nop.Core.Domain.Orders
             get => (ShoppingCartType)ShoppingCartTypeId;
             set => ShoppingCartTypeId = (int)value;
         }
+
+        public int? ProductConfigurationId { get; set; }
     }
 }

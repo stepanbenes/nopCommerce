@@ -93,6 +93,8 @@ namespace Nop.Data.Migrations
             _migrationManager.BuildTable<ProductAttributeMapping>(Create);
             _migrationManager.BuildTable<ProductAttributeValue>(Create);
 
+            _migrationManager.BuildTable<ProductConfiguration>(Create);
+
             _migrationManager.BuildTable<Order>(Create);
             _migrationManager.BuildTable<OrderItem>(Create);
             _migrationManager.BuildTable<RewardPointsHistory>(Create);

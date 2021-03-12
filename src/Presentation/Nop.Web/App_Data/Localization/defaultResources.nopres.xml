@@ -3309,6 +3309,9 @@
   <LocaleResource Name="Admin.Catalog.Products.Fields.Sku.Reserved">
     <Value>The entered SKU is already reserved for the product '{0}'</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Catalog.Products.Fields.ConfigurationPrototype">
+    <Value>Configuration prototype path</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Catalog.Products.Fields.StockQuantity">
     <Value>Stock quantity</Value>
   </LocaleResource>
